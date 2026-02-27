@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Deadlines Pós — Calculadora</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --primary:#0B4DDB;
+      --bg:#F6F8FC;
+      --surface:#FFFFFF;
+      --text:#0F172A;
+      --muted:#64748B;
+      --border:#E6EAF2;
+      --shadow: 0 10px 30px rgba(2, 6, 23, .08);
+      --radius: 18px;
+    }
+    body.dark{
+      --bg:#0b1220;
+      --surface:#121a2b;
+      --text:#e6edf7;
+      --muted:#9aa7bd;
+      --border:#24324a;
+      --shadow: 0 14px 40px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      transition:.2s;
+    }
+    .topbar{
+      background:var(--primary);
+      color:#fff;
+      padding:10px 16px;
+      font-weight:800;
+      font-size:13px;
+      display:flex;
+      justify-content:center;
+      letter-spacing:.2px;
+    }
+    header{
+      background:var(--surface);
+      border-bottom:1px solid var(--border);
+    }
+    .header-inner{
+      max-width:980px;
+      margin:0 auto;
+      padding:14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex;flex-direction:column;gap:2px;
+    }
+    .brand b{ color:var(--primary); font-size:18px; }
+    .brand span{ color:var(--muted); font-size:12px; }
+
+    .btn{
+      border:1px solid var(--border);
+      background:var(--surface);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .btn-primary{
+      background:var(--primary);
+      border-color:var(--primary);
+      color:#fff;
+      box-shadow: 0 10px 24px rgba(11,77,219,.22);
+    }
+    .btn:hover{ filter:brightness(1.03); }
+
+    .wrap{
+      max-width:980px;
+      margin:0 auto;
+      padding:18px 16px 40px;
+    }
+    .card{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width:720px){ .grid{ grid-template-columns:1fr; } }
+
+    label{
+      display:block;
+      margin:12px 0 8px;
+      font-weight:900;
+      font-size:13px;
+    }
+    input[type="text"], input[type="number"]{
+      width:100%;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:var(--surface);
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+    }
+    input:focus{
+      border-color: rgba(11,77,219,.45);
+      box-shadow: 0 0 0 4px rgba(11,77,219,.10);
+    }
+
+    .hint{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.35;
+    }
+
+    .radio-row{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-top:10px;
+      padding:12px 12px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:var(--surface);
+    }
+    .radio{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:800;
+      font-size:13px;
+      color:var(--text);
+    }
+    .radio input{ width:auto; }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+    .out{ display:none; margin-top:14px; }
+
+    .row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:12px 14px;
+      border:1px solid var(--border);
+      border-radius:16px;
+      background:var(--surface);
+      margin-top:10px;
+    }
+    .tag{ font-weight:900; font-size:13px; color:var(--text); }
+    .date{ font-weight:900; color:var(--primary); }
+
+    .warn{
+      display:none;
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px solid #FDE68A;
+      background:#FFFBEB;
+      color:#92400E;
+      font-weight:800;
+      font-size:13px;
+      line-height:1.35;
+    }
+    body.dark .warn{
+      border-color:#6b4b12;
+      background:#2b1e05;
+      color:#ffd28a;
+    }
+
+    .mono{
+      margin-top:12px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      font-size:12px;
+      color:var(--muted);
+      word-break:break-word;
+      line-height:1.4;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">Deadlines de Pós • Regravações</div>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <b>Calculadora</b>
+        <span>Entrada: Gravação ou Publicação/Final</span>
+      </div>
+      <button class="btn" id="themeToggle">🌙 Alternar tema</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+
+      <label>Qual data você vai informar?</label>
+      <div class="radio-row">
+        <label class="radio">
+          <input type="radio" name="mode" value="record" checked>
+          Vou informar <b>deadline de gravação</b>
+        </label>
+        <label class="radio">
+          <input type="radio" name="mode" value="publish">
+          Vou informar <b>deadline de publicação/final</b>
+        </label>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="recordInput">Deadline de gravação (dd/mm/aaaa)</label>
+          <input id="recordInput" type="text" inputmode="numeric" placeholder="ex: 20/06/2026">
+        </div>
+        <div>
+          <label for="publishInput">Deadline de publicação/final (dd/mm/aaaa)</label>
+          <input id="publishInput" type="text" inputmode="numeric" placeholder="ex: 05/07/2026">
+        </div>
+      </div>
+
+      <div class="hint">
+        Regras fixas: <b>Slide = Gravação - 7</b> • <b>Edição = Gravação + 10</b> e também <b>Edição = Publicação - 5</b> • Logo <b>Publicação = Gravação + 15</b>. <br>
+        “Publicação/Final” já é o prazo final que inclui <b>materiais complementares + slides + vídeos</b>.
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="daysBeforeRecordSlides">Slide (dias antes da gravação)</label>
+          <input id="daysBeforeRecordSlides" type="number" value="7" min="0">
+        </div>
+        <div>
+          <label for="daysAfterRecordEdit">Edição (dias após a gravação)</label>
+          <input id="daysAfterRecordEdit" type="number" value="10" min="0">
+        </div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="daysBeforePublishEdit">Edição (dias antes da publicação)</label>
+          <input id="daysBeforePublishEdit" type="number" value="5" min="0">
+        </div>
+        <div>
+          <label for="scheduleDay">Deadline agendar (dia 20 do mês anterior à gravação)</label>
+          <input id="scheduleDay" type="number" value="20" min="1" max="28">
+          <div class="hint">Recomendado até 28 pra não estourar fevereiro.</div>
+        </div>
+      </div>
+
+      <div class="warn" id="warnBox"></div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="calcBtn">Calcular</button>
+        <button class="btn" id="copyBtn">Copiar resumo</button>
+      </div>
+
+      <div class="out" id="out">
+        <div class="row"><div class="tag">Deadline Agendar</div><div class="date" id="scheduleOut"></div></div>
+        <div class="row"><div class="tag">Deadline Slide</div><div class="date" id="slideOut"></div></div>
+        <div class="row"><div class="tag">Deadline Gravação</div><div class="date" id="recordOut"></div></div>
+        <div class="row"><div class="tag">Deadline Edição</div><div class="date" id="editOut"></div></div>
+        <div class="row"><div class="tag">Deadline Publicação/Final</div><div class="date" id="publishOut"></div></div>
+
+        <div class="mono" id="summaryLine"></div>
+      </div>
+    </section>
+  </main>
+
+<script>
+  // THEME
+  const themeToggle = document.getElementById("themeToggle");
+  if (localStorage.getItem("theme") === "dark") document.body.classList.add("dark");
+  themeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+  });
+
+  // HELPERS
+  function parseBRDate(text){
+    if(!text) return null;
+    const s = text.trim();
+    const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(!m) return null;
+
+    const d = Number(m[1]), mo = Number(m[2]), y = Number(m[3]);
+    if(mo<1 || mo>12 || d<1 || d>31) return null;
+
+    const date = new Date(y, mo-1, d, 12, 0, 0, 0);
+    if(date.getFullYear()!==y || date.getMonth()!==(mo-1) || date.getDate()!==d) return null;
+    return date;
+  }
+
+  function formatBR(date){
+    const dd = String(date.getDate()).padStart(2,"0");
+    const mm = String(date.getMonth()+1).padStart(2,"0");
+    const yyyy = date.getFullYear();
+    return `${dd}/${mm}/${yyyy}`;
+  }
+
+  function addDays(date, days){
+    const c = new Date(date.getTime());
+    c.setDate(c.getDate() + days);
+    return c;
+  }
+
+  function scheduleFromRecord(recordDate, scheduleDay){
+    const y = recordDate.getFullYear();
+    const m = recordDate.getMonth(); // 0..11
+    const prevMonthFirst = new Date(y, m-1, 1, 12, 0, 0, 0);
+
+    const lastDay = new Date(prevMonthFirst.getFullYear(), prevMonthFirst.getMonth()+1, 0, 12).getDate();
+    const day = Math.min(Math.max(1, scheduleDay), lastDay);
+
+    return new Date(prevMonthFirst.getFullYear(), prevMonthFirst.getMonth(), day, 12, 0, 0, 0);
+  }
+
+  function sameDay(a,b){
+    return a.getFullYear()===b.getFullYear() &&
+           a.getMonth()===b.getMonth() &&
+           a.getDate()===b.getDate();
+  }
+
+  // ELEMENTS
+  const recordInput = document.getElementById("recordInput");
+  const publishInput = document.getElementById("publishInput");
+
+  const daysBeforeSlides = document.getElementById("daysBeforeRecordSlides"); // 7
+  const daysAfterEdit = document.getElementById("daysAfterRecordEdit");       // 10
+  const daysBeforePublishEdit = document.getElementById("daysBeforePublishEdit"); // 5
+  const scheduleDay = document.getElementById("scheduleDay");
+
+  const warnBox = document.getElementById("warnBox");
+  const out = document.getElementById("out");
+
+  const scheduleOut = document.getElementById("scheduleOut");
+  const slideOut = document.getElementById("slideOut");
+  const recordOut = document.getElementById("recordOut");
+  const editOut = document.getElementById("editOut");
+  const publishOut = document.getElementById("publishOut");
+  const summaryLine = document.getElementById("summaryLine");
+
+  function getMode(){
+    return document.querySelector('input[name="mode"]:checked').value;
+  }
+
+  function showWarn(msg){ warnBox.style.display="block"; warnBox.textContent=msg; }
+  function hideWarn(){ warnBox.style.display="none"; warnBox.textContent=""; }
+
+  function calc(){
+    hideWarn();
+
+    const mode = getMode();
+    const bSlides = Number(daysBeforeSlides.value || 0);
+    const aEdit = Number(daysAfterEdit.value || 0);
+    const bEditFromPublish = Number(daysBeforePublishEdit.value || 0);
+    const sch = Number(scheduleDay.value || 20);
+
+    let record, publish;
+
+    if(mode === "record"){
+      record = parseBRDate(recordInput.value);
+      if(!record){
+        alert("Digite a deadline de gravação no formato dd/mm/aaaa.");
+        return;
+      }
+      // Edição = record + aEdit; Publicação = edição + bEditFromPublish
+      const editTmp = addDays(record, aEdit);
+      publish = addDays(editTmp, bEditFromPublish);
+
+      // Preenche o outro campo pra operar mais rápido
+      publishInput.value = formatBR(publish);
+    } else {
+      publish = parseBRDate(publishInput.value);
+      if(!publish){
+        alert("Digite a deadline de publicação/final no formato dd/mm/aaaa.");
+        return;
+      }
+      // Edição = publish - bEditFromPublish; Gravação = edição - aEdit
+      const editTmp = addDays(publish, -bEditFromPublish);
+      record = addDays(editTmp, -aEdit);
+
+      recordInput.value = formatBR(record);
+    }
+
+    const slide = addDays(record, -bSlides);
+    const edit = addDays(record, aEdit);
+    const publishCalc = addDays(edit, bEditFromPublish);
+    const schedule = scheduleFromRecord(record, sch);
+
+    // Check de consistência (quando entrada é publicação, ou quando alguém mexer nos números)
+    if(!sameDay(publish, publishCalc)){
+      showWarn("Atenção: as regras atuais não fecham com a data. Pela regra, Publicação deveria ser (Gravação + Edição + 5). Verifique os números (10 e 5) ou a data informada.");
+    }
+
+    scheduleOut.textContent = formatBR(schedule);
+    slideOut.textContent = formatBR(slide);
+    recordOut.textContent = formatBR(record);
+    editOut.textContent = formatBR(edit);
+    publishOut.textContent = formatBR(publish);
+
+    summaryLine.textContent =
+      `Agendar ${formatBR(schedule)} | Slide ${formatBR(slide)} | Gravação ${formatBR(record)} | ` +
+      `Edição ${formatBR(edit)} | Publicação/Final ${formatBR(publish)} (inclui complementares)`;
+
+    out.style.display = "block";
+  }
+
+  document.getElementById("calcBtn").addEventListener("click", calc);
+
+  document.getElementById("copyBtn").addEventListener("click", async () => {
+    if(out.style.display==="none") calc();
+    const text = summaryLine.textContent || "";
+    try{
+      await navigator.clipboard.writeText(text);
+      alert("Resumo copiado!");
+    }catch{
+      prompt("Copie o texto:", text);
+    }
+  });
+
+  // Habilita/desabilita inputs conforme modo
+  function syncInputs(){
+    const mode = getMode();
+    const recordDisabled = (mode !== "record");
+    const publishDisabled = (mode !== "publish");
+    recordInput.disabled = recordDisabled;
+    publishInput.disabled = publishDisabled;
+    recordInput.style.opacity = recordDisabled ? .6 : 1;
+    publishInput.style.opacity = publishDisabled ? .6 : 1;
+  }
+  document.querySelectorAll('input[name="mode"]').forEach(r => r.addEventListener("change", syncInputs));
+  syncInputs();
+</script>
+</body>
+</html>
